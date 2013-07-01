@@ -12,6 +12,7 @@
 
 @property (nonatomic, strong, readwrite) UIViewController * topViewController;
 @property (nonatomic, strong, readwrite) UITableViewController * tableViewController;
+@property (nonatomic, strong, readwrite) UIViewController * segmentedViewController;
 
 @property (nonatomic, assign, readwrite) CGFloat topViewControllerStandartHeight;
 
@@ -33,7 +34,8 @@
 #pragma mark - Public
 ////////////////////////////////////////////////////////////////////////
 
-- (void)setupWithTopViewController:(UIViewController *)topViewController height:(CGFloat)height tableViewController:(UITableViewController *)tableViewController {
+
+- (void)setupWithTopViewController:(UIViewController *)topViewController height:(CGFloat)height tableViewController:(UITableViewController *)tableViewController segmentedViewController:(UIViewController *)segmentedViewController{
     
     self.topViewControllerStandartHeight = height;
     
@@ -41,6 +43,7 @@
     [tableViewController.tableView setBackgroundView:nil];
     [topViewController.view setClipsToBounds:YES];
     [tableViewController.view setClipsToBounds:YES];
+    [segmentedViewController.view setClipsToBounds:YES];
     
     [self addChildViewController:topViewController];
     [self.view addSubview:topViewController.view];
@@ -50,11 +53,20 @@
     [self.view addSubview:tableViewController.view];
     [tableViewController didMoveToParentViewController:self];
     
+    [self addChildViewController:segmentedViewController];
+    [self.view addSubview:segmentedViewController.view];
+    [segmentedViewController didMoveToParentViewController:self];
+
+    
     tableViewController.tableView.frame = self.view.bounds;
     
-    topViewController.view.frame = CGRectMake(0, 0, self.view.bounds.size.width, self.topViewControllerStandartHeight);
-    tableViewController.tableView.contentInset = UIEdgeInsetsMake(topViewController.view.frame.size.height, 0, 0, 0);
+    segmentedViewController.view.frame = CGRectMake(0, self.topViewControllerStandartHeight, self.view.bounds.size.width, 43);
     
+    topViewController.view.frame = CGRectMake(0, 0, self.view.bounds.size.width, self.topViewControllerStandartHeight);
+    tableViewController.tableView.contentInset = UIEdgeInsetsMake((topViewController.view.frame.size.height + segmentedViewController.view.frame.size.height), 0, 0, 0);
+    
+    
+    self.segmentedViewController = segmentedViewController;
     self.topViewController = topViewController;
     self.tableViewController = tableViewController;
     
@@ -65,11 +77,13 @@
     if (tableViewController != self.tableViewController) {
         return;
     }
-
+    
+    
     UITableView * tableView = self.tableViewController.tableView;
     UIView * parallaxView = self.topViewController.view;
+    UIView * segmentedView = self.segmentedViewController.view;
     
-    float y = tableView.contentOffset.y + self.topViewControllerStandartHeight;
+    CGFloat y = tableView.contentOffset.y + self.topViewControllerStandartHeight;
     
     CGRect currentParallaxFrame = parallaxView.frame;
     
@@ -84,7 +98,9 @@
             [self willChangeHeightOfTopViewControllerFromHeight:parallaxView.frame.size.height toHeight:newHeight];
             
             parallaxView.frame = CGRectMake(currentParallaxFrame.origin.x, currentParallaxFrame.origin.y, currentParallaxFrame.size.width, newHeight);
-          
+            
+            segmentedView.frame = CGRectMake(0, (currentParallaxFrame.origin.y + newHeight), segmentedView.frame.size.width, segmentedView.frame.size.height);
+           
         }
 
         //uncomment if you want to support section headers - doesnt work 100%
@@ -107,6 +123,8 @@
         [self willChangeHeightOfTopViewControllerFromHeight:parallaxView.frame.size.height toHeight:newHeight];
         
         parallaxView.frame = CGRectMake(currentParallaxFrame.origin.x, currentParallaxFrame.origin.y, currentParallaxFrame.size.width, newHeight);
+        
+        segmentedView.frame = CGRectMake(0, (currentParallaxFrame.origin.y + newHeight), segmentedView.frame.size.width, segmentedView.frame.size.height);
 
         //uncomment if you want to support section headers - doesnt work 100%
 //        tableView.contentInset = UIEdgeInsetsMake(self.topViewControllerStandartHeight, 0, 0, 0);
