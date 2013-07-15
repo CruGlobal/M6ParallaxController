@@ -20,6 +20,7 @@
 @property (nonatomic, strong, readonly) UIViewController *segmentedViewController;
 
 - (void)setupWithTopViewController:(UIViewController *)topViewController height:(CGFloat)height tableViewController:(UITableViewController *)tableViewController segmentedViewController:(UIViewController *)segmentedViewController;
+-(void)switchTableViewController:(UITableViewController *)tableViewController;
 
 - (void)tableViewControllerDidScroll:(UITableViewController *)tableViewController;
 

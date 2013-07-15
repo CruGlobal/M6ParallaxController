@@ -72,6 +72,32 @@
     
 }
 
+-(void)switchTableViewController:(UITableViewController *)tableViewController {
+	
+    [self.tableViewController.view removeFromSuperview];
+	[self.tableViewController removeFromParentViewController];
+    [self.tableViewController didMoveToParentViewController:nil];
+	
+	[self addChildViewController:tableViewController];
+    [self.view addSubview:tableViewController.view];
+    [tableViewController didMoveToParentViewController:self];
+	
+	[self.view bringSubviewToFront:self.segmentedViewController.view];
+	
+	[tableViewController.tableView setBackgroundColor:[UIColor clearColor]];
+    [tableViewController.tableView setBackgroundView:nil];
+    [tableViewController.view setClipsToBounds:YES];
+	
+	tableViewController.tableView.frame = self.view.bounds;
+	
+	tableViewController.tableView.contentInset = UIEdgeInsetsMake((self.topViewControllerStandartHeight + self.segmentedViewController.view.frame.size.height), 0, 0, 0);
+	
+    self.tableViewController = tableViewController;
+	
+	[self.tableViewController.tableView reloadData];
+	
+}
+
 - (void)tableViewControllerDidScroll:(UITableViewController *)tableViewController {
     
     if (tableViewController != self.tableViewController) {
@@ -83,7 +109,7 @@
     UIView * parallaxView = self.topViewController.view;
     UIView * segmentedView = self.segmentedViewController.view;
     
-    CGFloat y = tableView.contentOffset.y + self.topViewControllerStandartHeight;
+    CGFloat y = tableView.contentOffset.y + self.topViewControllerStandartHeight + self.segmentedViewController.view.frame.size.height;
     
     CGRect currentParallaxFrame = parallaxView.frame;
     
