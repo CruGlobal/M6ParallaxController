@@ -94,7 +94,25 @@
 	
     self.tableViewController = tableViewController;
 	
+	[self resetContentOffset];
+	
 	[self.tableViewController.tableView reloadData];
+	
+}
+
+-(void)resetContentOffset {
+	
+	UIView * parallaxView = self.topViewController.view;
+	UIView * segmentedView = self.segmentedViewController.view;
+	CGRect currentParallaxFrame = parallaxView.frame;
+	
+	[self.tableViewController.tableView setContentOffset:CGPointMake(0.0f, -self.topViewControllerStandartHeight - self.segmentedViewController.view.frame.size.height)];
+	//[self.tableViewController.tableView scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:0] atScrollPosition:UITableViewScrollPositionTop animated:YES];
+	parallaxView.frame = CGRectMake(currentParallaxFrame.origin.x, currentParallaxFrame.origin.y, currentParallaxFrame.size.width, self.topViewControllerStandartHeight);
+	
+	segmentedView.frame = CGRectMake(0, (currentParallaxFrame.origin.y + self.topViewControllerStandartHeight), segmentedView.frame.size.width, segmentedView.frame.size.height);
+	//[self tableViewControllerDidScroll:self.tableViewController];
+	parallaxView.contentMode = UIViewContentModeRedraw;
 	
 }
 
@@ -127,7 +145,11 @@
             
             segmentedView.frame = CGRectMake(0, (currentParallaxFrame.origin.y + newHeight), segmentedView.frame.size.width, segmentedView.frame.size.height);
            
-        }
+        } else {
+			
+			segmentedView.frame = CGRectMake(0, 0, segmentedView.frame.size.width, segmentedView.frame.size.height);
+			
+		}
 
         //uncomment if you want to support section headers - doesnt work 100%
 //        if (y >= self.topViewControllerStandartHeight) {
