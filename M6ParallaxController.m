@@ -74,6 +74,8 @@
 
 -(void)switchTableViewController:(UITableViewController *)tableViewController {
 	
+	[self resetContentOffset];
+	
     [self.tableViewController.view removeFromSuperview];
 	[self.tableViewController removeFromParentViewController];
     [self.tableViewController didMoveToParentViewController:nil];
